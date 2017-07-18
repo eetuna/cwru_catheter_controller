@@ -1,239 +1,259 @@
+/*
+  Copyright 2017 Russell Jackson
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
 #include <string>
 #include <vector>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 
-#include "com/pc_utils.h"
-#include "ser/serial_sender.h"
-#include "ser/simple_serial.h"
+#include "catheter_arduino_gui/pc_utils.h"
+#include "catheter_arduino_gui/serial_sender.h"
+#include "catheter_arduino_gui/simple_serial.h"
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
 #ifdef _DEBUG
-   #ifndef DBG_NEW
-      #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-      #define new DBG_NEW
-   #endif
+  #ifndef DBG_NEW
+    #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+    #define new DBG_NEW
+  #endif
 #endif  // _DEBUG
 #endif  // __MSC_VER
 
-CatheterSerialSender::CatheterSerialSender() {
-	port_name = "";
-	sp = new SerialPort();
+
+CatheterSerialSender::CatheterSerialSender():
+commandHistory_(),
+dataChange_(false),
+responseLength_(-1)
+{
+  port_name = "";
+  sp = new SerialPort();
 }
 
-CatheterSerialSender::~CatheterSerialSender() {
-	// sp->stop();
-	delete sp;
+
+CatheterSerialSender::~CatheterSerialSender()
+{
+  // sp->stop();
+  delete sp;
 }
 
-void CatheterSerialSender::getAvailablePorts(std::vector<std::string>& ports) {
-	ports.clear();
-	ports = sp->get_port_names();
+
+void CatheterSerialSender::getAvailablePorts(std::vector<std::string>& ports)
+{
+  ports.clear();
+  ports = sp->get_port_names();
 }
 
-void CatheterSerialSender::setPort(const std::string port) {
-	this->port_name = port;
+
+void CatheterSerialSender::setPort(const std::string port)
+{
+  this->port_name = port;
 }
 
-std::string CatheterSerialSender::getPort() {
-	return port_name;
+
+std::string CatheterSerialSender::getPort()
+{
+  return port_name;
 }
 
-// design plan: 
+
+// design plan:
 // don't want to keep calling get_port_names() every time the serial port needs to be re-opened;
 // should do this once when CatheterSerialSender is initialized, and again when the user requests
-// the serial connection to be refreshed. Instead of a port_name field, keep a vector<string> of 
+// the serial connection to be refreshed. Instead of a port_name field, keep a vector<string> of
 // discovered ports, as well as a port_id (default 0) to index into ports.
-bool CatheterSerialSender::start() {
-	if (!sp->isOpen()) {
-		if (port_name.empty()) {
-			std::vector<std::string> ports = sp->get_port_names();
-			if (!ports.size()) {
-				return false;
-			}
-			port_name = ports[0];
-		}		
-		return sp->start(port_name.c_str());
-	} else {
-		return true;
-	}
-}
-
-// try not to use this method because it is unneccessary and 
-// will probably be removed in the future, since one can
-// accomplish the same task from outside the class by calling
-// ss->setPort(port); ss->start();
-bool CatheterSerialSender::start(const std::string& port) {
-	if (!sp->isOpen()) {
-		port_name = port;
-		return start();
-	}
-	else {
-		return true;
-	}
-}
-
-bool CatheterSerialSender::stop() {
-	sp->stop();
-	return true;
-}
-
-void CatheterSerialSender::serialReset() {
-	if (sp->isOpen()) {
-		sp->flushData();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
-		sp->stop();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
-	}
-	start();
-}
-
-bool CatheterSerialSender::resetStop() {
-	return stop();
+bool CatheterSerialSender::start()
+{
+  commandHistory_.clear();
+  if (!sp->isOpen())
+  {
+    if (port_name.empty())
+    {
+      std::vector<std::string> ports = sp->get_port_names();
+      if (!ports.size())
+      {
+        return false;
+      }
+      port_name = ports[0];
+    }
+    return sp->start(port_name.c_str());
+  }
+  else
+  {
+    return true;
+  }
 }
 
 
+bool CatheterSerialSender::stop()
+{
+  commandHistory_.clear();
+  sp->stop();
+  return true;
+}
 
-/*bool CatheterSerialSender::runPlayfile(const std::vector<CatheterChannelCmd>& cmds, std::vector<CatheterChannelCmd>& cmdsReturned) {
-	cmdsReturned.clear();
-	
-	if (!sp->isOpen()) {
-		start();
-	}
 
-	if (!sendReset()) return false;
-	
-	std::vector<std::vector<uint8_t>> cmdBytes;
-	std::vector<int> delays;	
-	std::vector<int> ncmdsPerPacket;
-	// temporary (per packet) storage:
-	std::vector<unsigned char> bytesRead;	
-	std::vector<CatheterChannelCmd> parsedCmds;
-	// for debugging:
-	std::vector<unsigned char> allBytesSent;
-	std::vector<unsigned char> allBytesRead;
-	// for serial timing:
-	unsigned int max_pause = MAX_PAUSE_MS;
-	unsigned int expectedBytes = 0;
-	unsigned int initial_delay_ms = 100;
-	unsigned int delay_ms = 0;
-	unsigned int npolled = 0;
-	bool packets_ok = true;
+void CatheterSerialSender::serialReset()
+{
+  if (sp->isOpen())
+  {
+    sp->flushData();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+    sp->stop();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+  }
+  start();
+}
 
-	getPacketBytes(pseqnum, cmds, cmdBytes, delays, ncmdsPerPacket);
-	if (!ncmdsPerPacket.size()) return false;
-	pseqnum = ((pseqnum + (ncmdsPerPacket.size() - 1)) & 7) + 1;
 
-	unsigned int cmd_counter = 0;
-	for (int i = 0; i < cmdBytes.size(); i++) {
-		bytesRead.clear();
-		parsedCmds.clear();
-		delay_ms = 0;		
-		npolled = 0;
-		for (int j = 0; j < ncmdsPerPacket[i]; j++) 
-			if (cmds[cmd_counter + j].poll) npolled++;
-		expectedBytes = RESPONSE_LEN(ncmdsPerPacket[i], (cmds[cmd_counter].channel == GLOBAL_ADDR), npolled);
-		max_pause = (delays[i] > MAX_PAUSE_MS ? delays[i] : MAX_PAUSE_MS);
-		cmd_counter += ncmdsPerPacket[i];
-
-		//sp->flushData();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(initial_delay_ms));
-		max_pause -= initial_delay_ms;
-
-		// send packet bytes. bytesRead has been stripped of terminating characters.
-		bool sent(sendBytes(cmdBytes[i], bytesRead, expectedBytes, &delay_ms, max_pause));
-		packets_ok = packets_ok && sent;
-		// verify checksum
-		unsigned int f8 = fletcher8(bytesRead.size() - PCK_CHK_LEN, bytesRead.data());
-		packets_ok = packets_ok && (f8 == bytesRead[bytesRead.size() - 1]);
-		// parse received bytes into channel commands
-		if (packets_ok) {
-			packets_ok = packets_ok && parseBytes2Cmds_NEW(cmdBytes[i], bytesRead, parsedCmds);
-			cmdsReturned.insert(cmdsReturned.end(), parsedCmds.begin(), parsedCmds.end());
-		}
-		// debugging
-		allBytesSent.insert(allBytesSent.end(), cmdBytes[i].begin(), cmdBytes[i].end());
-		allBytesRead.insert(allBytesRead.end(), bytesRead.begin(), bytesRead.end());
-		
-		if (delay_ms < delays[i]) {
-			boost::this_thread::sleep(boost::posix_time::milliseconds(delays[i] - delay_ms));
-		}
-	}
-
-	sendReset();
-	
-	// validate that the current data returned match the current data sent
-	if (packets_ok) {
-		int cmdptr = 0;
-		for (int i = 0; i < cmds.size(); i++) {		
-			packets_ok = packets_ok && (abs(cmds[i].currentMilliAmp - cmdsReturned[i].currentMilliAmp) < 1); // 1 mA rounding error? 
-		}
-	}
-
-	// debug
-	// writePlayFile("cmds_to_send.play", cmds);
-	// writeBytes("cmd_bytes_sent.local.txt", allBytesSent);
-	// writeBytes("cmd_bytes_returned.local.txt", allBytesRead);
-	// writePlayFile("cmds_returned.local.play", cmdsReturned);
-
-	return packets_ok;	
-} */
+bool CatheterSerialSender::resetStop()
+{
+  return stop();
+}
 
 
 bool CatheterSerialSender::dataAvailable()
 {
-	std::vector<unsigned char> temp = sp->flushData();
-	bytesAvailable.insert(bytesAvailable.end(), temp.begin(), temp.end());
-	if(bytesAvailable.size() > 0) return true;
-	else return false;
+  if (sp->hasData())
+  {
+    std::vector<uint8_t> temp = sp->flushData();
+    bytesAvailable.insert(bytesAvailable.end(), temp.begin(), temp.end());
+    this->dataChange_ = true;
+  }
+  return this->dataChange_;
 }
 
 
-comStatus CatheterSerialSender::getData(std::vector<CatheterChannelCmd> &cmd)
+int CatheterSerialSender::processData(std::vector<CatheterChannelCmd> &cmd)
 {
-	cmd.clear();
-	return parseBytes2Cmds(bytesAvailable, cmd);
+  cmd.clear();
+  this->dataChange_ = true;
+  return parseBytes2Cmds(this->responseLength_, bytesAvailable, cmd);
 }
 
 
 bool CatheterSerialSender::connected()
 {
-	if (!sp->isOpen())
-	{
-		return false;
-	}
-	else return true;
+  if (!sp->isOpen())
+  {
+    return false;
+  }
+  else return true;
 }
 
-void CatheterSerialSender::sendCommand(const CatheterChannelCmdSet & outgoingData, int pseqnum)
+
+int CatheterSerialSender::sendCommand(const CatheterChannelCmdSet & outgoingData, int pseqnum)
 {
-	// parse the command:
-	std::vector< uint8_t > bytesOut(encodeCommandSet(outgoingData, pseqnum));
-	if (connected())
-	{
-		// send it through the serial port:
-		sp->write_some_bytes(bytesOut, bytesOut.size());
-	}
+  // parse the command:
+  std::vector< uint8_t > bytesOut(encodeCommandSet(outgoingData, pseqnum));
+  int expectedResponse(estResponseSize(outgoingData));
+  commandHistory_.push_back(commandInformation(pseqnum, expectedResponse));
+  if (connected())
+  {
+    // send it through the serial port:
+    printf("connected and sending\n");
+    return static_cast<int> (sp->write_some_bytes(bytesOut));
+  }
+  else
+  {
+    printf("not connected");
+    return 0;
+  }
 }
 
-std::string comStat2String(const comStatus& statIn)
+
+comStatus CatheterSerialSender::probePacket()
 {
-	switch(statIn)
-	{
-	case invalid:
-		return std::string("Invalid");
-		break;
-	case valid:
-		return std::string("valid");
-		break;
-	case none:
-		return std::string("none");
-		break;
-	default:
-		return std::string("unknown status");
-	}
+  this->dataChange_ = false;
+  // probe the current incoming packet to see if it is a valid response with a matching
+  // preamble index.
+  printData(bytesAvailable);
+  if (bytesAvailable.size() > 1)
+  {
+    int index(parseFirstSecondByte(bytesAvailable));
+    printf("%d, %d\n", bytesAvailable[0], bytesAvailable[1]);
+    printf("Index: <%d> \n ", index);
+    if (index < 0)
+    {
+      return returnAndWipe();
+    }
+    else
+    {
+      if (bytesAvailable.size() > 2)
+      {
+        int length(parseThirdByte(bytesAvailable));
+        printf("Size compare: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
+        if (length > bytesAvailable.size())
+        {
+           printf("incomplete: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
+          return incomplete;
+        }
+        else
+        {
+          bool fletcherVal(checkFletcher(length, bytesAvailable));
+          if (fletcherVal)
+          {
+            this->responseLength_ = length;
+            return valid;
+          }
+          else
+          {
+            printf("failed fletcher\n");
+            return returnAndWipe();
+          }
+        }
+      }
+      else
+      {
+        return incomplete;
+      }
+    }
+  }
+  return none;
 }
+
+comStatus CatheterSerialSender::returnAndWipe()
+{
+  this->bytesAvailable.erase(bytesAvailable.begin());
+  this->responseLength_ = -1;
+  this->dataChange_ = true;
+  return invalid;
+}
+
+void printComStat(const comStatus& statIn)
+{
+  switch (statIn)
+  {
+  case invalid:
+    printf("Invalid\n");
+    break;
+  case valid:
+    printf("valid\n");
+    break;
+  case none:
+    printf("none\n");
+    break;
+  case incomplete:
+    printf("incomplete\n");
+    break;
+  default:
+    printf("unknown status\n");
+  }
+}
+
+

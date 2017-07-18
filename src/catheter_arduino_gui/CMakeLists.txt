@@ -1,49 +1,35 @@
 cmake_minimum_required(VERSION 2.8)
 
-
 project(catheter_arduino_gui)
-
-
-
-find_package(catkin)
 
 find_package(Boost COMPONENTS system thread REQUIRED)
 find_package(wxWidgets COMPONENTS core base adv propgrid REQUIRED )
 find_package(GTest REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O0" )
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-
-IF( catkin_FOUND)
-
-MESSAGE(Found Catkin:)
+find_package(catkin REQUIRED COMPONENTS roslint)
 
 catkin_package(
-      INCLUDE_DIRS inc
+      INCLUDE_DIRS include
       LIBRARIES pc_utils_lib
-      CATKIN_DEPENDS
-              roscpp
-      DEPENDS
-              GTest
-      EXPORTED_TARGETS
+      DEPENDS 
+        GTest 
+        Boost COMPONENTS system thread
+        wxWidgets COMPONENTS core base adv propgrid
 )
-
-ENDIF()
-
 
 include_directories(
 ${catkin_INCLUDE_DIRS}
 ${BOOST_INCLUDE_DIRS}
 ${GTEST_INCLUDE_DIRS}
-inc
+include
 )
 
 
 include( "${wxWidgets_USE_FILE}" )
 
 # common folder libs
-
 
 add_library(catheter_commands_lib src/com/catheter_commands.cpp)
 
@@ -157,8 +143,9 @@ ${wxWidgets_ADVANCED_LIBRARIES}
 ${wxWidgets_LIBRARIES}
 )
 
+roslint_cpp()
 
-if(catkin_FOUND)
+roslint_add_test()
 
 # Add gtest for pc_utils
 catkin_add_gtest(test_pc_utils test/test_pc_utils.cpp WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
@@ -169,10 +156,10 @@ target_link_libraries(
     pthread
 )
 
-
-install(DIRECTORY test/
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test
+catkin_add_gtest(test_adc_dac test/test_adc_dac.cpp WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+target_link_libraries(
+    test_adc_dac
+    catheter_analog_digital_libs
+    ${GTEST_LIBRARIES}
+    pthread
 )
-
-
-endif()
