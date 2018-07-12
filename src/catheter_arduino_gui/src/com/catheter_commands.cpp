@@ -242,7 +242,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
 
     if ((adcd1 >> 6) == 1)
     {
-      result.currentMilliAmp_ADC = -500.0;
+      result.currentMilliAmp_ADC = 0.0;
     }
     else
     {
