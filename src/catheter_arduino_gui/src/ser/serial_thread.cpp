@@ -23,16 +23,6 @@
 #include <serial/serial.h>
 #include "catheter_arduino_gui/serial_thread.h"
 
-#include <stdint.h>
-#include <iostream>     // std::cout, std::fixed
-#include <iomanip>      // std::setprecision
-#include <fstream>
-#include <unistd.h>
- 
-static int countCommand = 0;
-std::ofstream myfile_chs;
-unsigned int microseconds = 10;
-
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
