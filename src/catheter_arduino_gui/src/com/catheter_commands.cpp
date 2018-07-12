@@ -22,10 +22,6 @@
 #include <iomanip>      // std::setprecision
 #include <fstream>
 #include <unistd.h>
- 
-static int countCommand = 0;
-std::ofstream myfile_chs;
-unsigned int microseconds = 200;
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
@@ -220,24 +216,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   // If the Poll bit is true, pull off the adc value
   if (result.poll)
   {
-  	countCommand = countCommand + 1;
-    std::cout << "modulo ChanNum: " << countCommand % 6 << std::endl;
-    //std::cout << "Writing this to a file.\n" << std::endl;
 
-  	if (countCommand % 6 == 1)
-  		myfile_chs.open("currentsADC_ch1.txt", std::ofstream::app);
-  	else if (countCommand % 6 == 2)
-  		myfile_chs.open("currentsADC_ch2.txt", std::ofstream::app);
-  	else if (countCommand % 6 == 3)
-  		myfile_chs.open("currentsADC_ch3.txt", std::ofstream::app);
-  	else if (countCommand % 6 == 4)
-  		myfile_chs.open("currentsADC_ch4.txt", std::ofstream::app);
-  	else if (countCommand % 6 == 5)
-  		myfile_chs.open("currentsADC_ch5.txt", std::ofstream::app);
-  	else if (countCommand % 6 == 0)
-  		myfile_chs.open("currentsADC_ch6.txt", std::ofstream::app);
-  	
-  	printf("Got here poll\n");
     result.poll = true;
     uint16_t adcd1(static_cast<uint16_t> (cmdBytes[index]));
 
@@ -253,12 +232,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
     //  convert adc bits to a double.
     result.currentMilliAmp_ADC = adc2MilliAmp(adcData);
     }
-
-    myfile_chs << std::setprecision(6) << result.currentMilliAmp_ADC << std::endl;
     index += 2;
-
-    myfile_chs.close();
-    //usleep(microseconds);
   }
 
   return result;
@@ -296,7 +270,6 @@ int parseBytes2Cmds(int byteCount, std::vector<uint8_t>& bytesRead, std::vector<
   int byteIndex(3);
   while (byteIndex + 1 < byteCount)
   {
-  	printf("Here parseBytes2Cmds:\n");
     cmds.push_back(parseSingleCommand(bytesRead, byteIndex));
   }
   bytesRead.erase(bytesRead.begin(), bytesRead.begin() + byteCount);

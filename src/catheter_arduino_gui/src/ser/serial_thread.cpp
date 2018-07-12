@@ -23,16 +23,6 @@
 #include <serial/serial.h>
 #include "catheter_arduino_gui/serial_thread.h"
 
-#include <stdint.h>
-#include <iostream>     // std::cout, std::fixed
-#include <iomanip>      // std::setprecision
-#include <fstream>
-#include <unistd.h>
- 
-static int countCommand = 0;
-std::ofstream myfile_chs;
-unsigned int microseconds = 10;
-
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -79,21 +69,19 @@ void SerialThreadObject::serialLoop()
 
               CatheterChannelCmd incomingData;
               boost::recursive_mutex::scoped_lock lock(threadMutex_);
-              // printf("recieved command: ");
-              // printComStat(newCom);
+              //printf("recieved command: ");
+              //printComStat(newCom);
               if (newCom == valid)
               {
-                printf("newComValid\n");
                 ss_->processData(commandFromArd.commandList);
                 if (statusGridData_ != NULL)
                 {
-                  printf("updateCmdList\n");
                   statusGridData_->updateCmdList(commandFromArd.commandList);
                 }
               }
               else
               {
-                printf("NEW COM INVALID\n");
+                //printf("invalid\n");
               }
               lock.unlock();
           }
