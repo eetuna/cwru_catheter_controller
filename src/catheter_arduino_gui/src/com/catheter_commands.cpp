@@ -25,7 +25,6 @@
  
 static int countCommand = 0;
 std::ofstream myfile_chs;
-unsigned int microseconds = 200;
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
