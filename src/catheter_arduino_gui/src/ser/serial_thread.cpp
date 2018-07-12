@@ -23,6 +23,15 @@
 #include <serial/serial.h>
 #include "catheter_arduino_gui/serial_thread.h"
 
+#include <stdint.h>
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
+#include <fstream>
+#include <unistd.h>
+ 
+static int countCommand = 0;
+std::ofstream myfile_chs;
+unsigned int microseconds = 10;
 
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
@@ -62,30 +71,32 @@ void SerialThreadObject::serialLoop()
   {
     if (ss_->connected())
     {
-      if (ss_->dataAvailable())
-      {
-        comStatus newCom(ss_->probePacket());
-
-        printComStat(newCom);
-
-        CatheterChannelCmd incomingData;
-        boost::recursive_mutex::scoped_lock lock(threadMutex_);
-        // printf("recieved command: ");
-        // printComStat(newCom);
-        if (newCom == valid)
-        {
-          ss_->processData(commandFromArd.commandList);
-          if (statusGridData_ != NULL)
+          if (ss_->dataAvailable())
           {
-            statusGridData_->updateCmdList(commandFromArd.commandList);
+              comStatus newCom(ss_->probePacket());
+
+              printComStat(newCom);
+
+              CatheterChannelCmd incomingData;
+              boost::recursive_mutex::scoped_lock lock(threadMutex_);
+              // printf("recieved command: ");
+              // printComStat(newCom);
+              if (newCom == valid)
+              {
+                printf("newComValid\n");
+                ss_->processData(commandFromArd.commandList);
+                if (statusGridData_ != NULL)
+                {
+                  printf("updateCmdList\n");
+                  statusGridData_->updateCmdList(commandFromArd.commandList);
+                }
+              }
+              else
+              {
+                printf("NEW COM INVALID\n");
+              }
+              lock.unlock();
           }
-        }
-        else
-        {
-          // printf("invalid\n");
-        }
-        lock.unlock();
-      }
       // why is there a segmentation fault here?
       // This is a fifo command
       boost::recursive_mutex::scoped_lock lock(threadMutex_);

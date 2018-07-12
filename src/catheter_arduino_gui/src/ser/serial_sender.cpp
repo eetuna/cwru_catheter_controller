@@ -205,6 +205,7 @@ comStatus CatheterSerialSender::probePacket()
         printf("Size compare: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
         if (length > bytesAvailable.size())
         {
+          printf("INCOMPLETE length\n");
            printf("incomplete: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
           return incomplete;
         }
@@ -213,18 +214,21 @@ comStatus CatheterSerialSender::probePacket()
           bool fletcherVal(checkFletcher(length, bytesAvailable));
           if (fletcherVal)
           {
+            printf("VALIDDDD\n");
             this->responseLength_ = length;
             return valid;
           }
           else
           {
             printf("failed fletcher\n");
+            printf("RETURN AND WIPE\n");
             return returnAndWipe();
           }
         }
       }
       else
       {
+        printf("INCOMPLETE direct\n");
         return incomplete;
       }
     }

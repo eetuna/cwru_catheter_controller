@@ -14,6 +14,13 @@
 #include "catheter_arduino_gui/pc_utils.h"
 #include "catheter_arduino_gui/serial_thread.h"
 
+#include <stdint.h>
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
+#include <fstream>
+#include <unistd.h>
+unsigned int microseconds = 100;
+
 #include <wx/wfstream.h>
 #include <wx/numdlg.h>
 #include <vector>
@@ -218,8 +225,13 @@ void CatheterGuiFrame::OnSendCommandsButtonClicked(wxCommandEvent& e)
 
 void CatheterGuiFrame::OnSendPollButtonClicked(wxCommandEvent& e)
 {
+  //for(int itr = 0; itr<100; itr++)
+  //{
+  //std::cout << "current iteration: " << itr << std::endl;
   sendPollCommand();
   setStatusText(wxT("Poll Command Successfully Sent"));
+  //usleep(microseconds);
+  //}
 }
 
 

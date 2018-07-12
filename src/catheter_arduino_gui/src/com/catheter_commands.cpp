@@ -221,7 +221,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   if (result.poll)
   {
   	countCommand = countCommand + 1;
-  	std::cout << countCommand % 6 << std::endl;
+    std::cout << "modulo ChanNum: " << countCommand % 6 << std::endl;
     //std::cout << "Writing this to a file.\n" << std::endl;
 
   	if (countCommand % 6 == 1)
@@ -237,7 +237,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   	else if (countCommand % 6 == 0)
   		myfile_chs.open("currentsADC_ch6.txt", std::ofstream::app);
   	
-  	//printf("Got here poll\n");
+  	printf("Got here poll\n");
     result.poll = true;
     uint16_t adcd1(static_cast<uint16_t> (cmdBytes[index]));
 
@@ -258,7 +258,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
     index += 2;
 
     myfile_chs.close();
-    usleep(microseconds);
+    //usleep(microseconds);
   }
 
   return result;
