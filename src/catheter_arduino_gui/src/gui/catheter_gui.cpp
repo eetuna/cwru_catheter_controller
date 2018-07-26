@@ -14,11 +14,6 @@
 #include "catheter_arduino_gui/pc_utils.h"
 #include "catheter_arduino_gui/serial_thread.h"
 
-#include <stdint.h>
-#include <iostream>     // std::cout, std::fixed
-#include <iomanip>      // std::setprecision
-#include <fstream>
-#include <unistd.h>
 
 #include <wx/wfstream.h>
 #include <wx/numdlg.h>
