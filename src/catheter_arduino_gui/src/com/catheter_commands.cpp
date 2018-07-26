@@ -17,15 +17,6 @@
 #include "catheter_arduino_gui/digital_analog_conversions.h"
 #include <vector>
 
-#include <stdint.h>
-#include <iostream>     // std::cout, std::fixed
-#include <iomanip>      // std::setprecision
-#include <fstream>
-#include <unistd.h>
- 
-static int countCommand = 0;
-std::ofstream myfile_chs;
-
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -219,12 +210,8 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   // If the Poll bit is true, pull off the adc value
   if (result.poll)
   {
-  	countCommand = countCommand + 1;
-    std::cout << "modulo ChanNum: " << countCommand % 15 << std::endl;
-    //std::cout << "Writing this to a file.\n" << std::endl;
   	printf("Got here poll\n");
-    result.poll = true
-    ;
+    result.poll = true;
     uint16_t adcd1(static_cast<uint16_t> (cmdBytes[index]));
 
     if ((adcd1 >> 6) == 1)
@@ -239,12 +226,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
     //  convert adc bits to a double.
     result.currentMilliAmp_ADC = adc2MilliAmp(adcData);
     }
-
-    myfile_chs << std::setprecision(6) << result.currentMilliAmp_ADC << std::endl;
     index += 2;
-d
-    myfile_chs.close();
-    //usleep(microseconds);
   }
 
   return result;
