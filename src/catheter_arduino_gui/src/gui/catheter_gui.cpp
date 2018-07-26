@@ -19,7 +19,6 @@
 #include <iomanip>      // std::setprecision
 #include <fstream>
 #include <unistd.h>
-unsigned int microseconds = 200;
 
 #include <wx/wfstream.h>
 #include <wx/numdlg.h>
@@ -225,13 +224,8 @@ void CatheterGuiFrame::OnSendCommandsButtonClicked(wxCommandEvent& e)
 
 void CatheterGuiFrame::OnSendPollButtonClicked(wxCommandEvent& e)
 {
-  for(int itr = 0; itr<100; itr++)
-  {
-  std::cout << "current iteration: " << itr << std::endl;
   sendPollCommand();
   setStatusText(wxT("Poll Command Successfully Sent"));
-  usleep(microseconds);
-  }
 }
 
 

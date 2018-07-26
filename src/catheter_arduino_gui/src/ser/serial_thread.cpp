@@ -73,11 +73,11 @@ void SerialThreadObject::serialLoop()
               // printComStat(newCom);
               if (newCom == valid)
               {
-                printf("newComValid\n");
+                printf("NEW COM VALID\n");
                 ss_->processData(commandFromArd.commandList);
                 if (statusGridData_ != NULL)
                 {
-                  printf("updateCmdList\n");
+                  //printf("updateCmdList\n");
                   statusGridData_->updateCmdList(commandFromArd.commandList);
                 }
               }

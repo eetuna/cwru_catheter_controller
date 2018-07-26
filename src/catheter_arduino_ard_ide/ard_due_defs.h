@@ -9,7 +9,7 @@
 #define GLOBAL_ADDR 0
 
 /* number of channels being used */
-#define NCHANNELS 6 
+#define NCHANNELS 15 
 
 
 /* number of bytes in a channel command, preamble, post-amble, packet checksum */
