@@ -17,12 +17,6 @@
 #include "catheter_arduino_gui/digital_analog_conversions.h"
 #include <vector>
 
-#include <stdint.h>
-#include <iostream>     // std::cout, std::fixed
-#include <iomanip>      // std::setprecision
-#include <fstream>
-#include <unistd.h>
-
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
