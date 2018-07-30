@@ -5,11 +5,12 @@
 #define CS_EN LOW
 #define H_EN HIGH
 #define DIR_ON HIGH
+#define H_DIR HIGH
 
 #define GLOBAL_ADDR 0
 
 /* number of channels being used */
-#define NCHANNELS 15 
+#define NCHANNELS 15 // changed this to 16 (actuation and localization coils) instead of 6 
 
 
 /* number of bytes in a channel command, preamble, post-amble, packet checksum */
