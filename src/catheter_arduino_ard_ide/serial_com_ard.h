@@ -48,7 +48,7 @@ void serial_init()
 {
 #ifdef DUE
   // set millisecond timeout so commands can be entered
-  SerialUSB.setTimeout(2);
+  SerialUSB.setTimeout(2); // waits 2 milliseconds until data
   SerialUSB.begin(BAUD);
 #else
   Serial.setTimeout(2);

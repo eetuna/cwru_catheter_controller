@@ -126,18 +126,30 @@ void pin_init()
 
   for (int i = 0; i < NCHANNELS; i++)
   {
-    pinMode(ADC_CS_pins[i], OUTPUT);
+    if(i < 9) { // Localization coils do not report back to the GUI and thus the ADC is not needed
+      pinMode(ADC_CS_pins[i], OUTPUT);
+    }
     pinMode(DAC_CS_pins[i], OUTPUT);
     pinMode(H_Enable_pins[i], OUTPUT);
-    pinMode(H_Neg_pins[i], OUTPUT);
-    pinMode(H_Pos_pins[i], OUTPUT);
+    //pinMode(H_Neg_pins[i], OUTPUT);
+    //pinMode(H_Pos_pins[i], OUTPUT);
+    if (i <  9) // There are 9 actuation channels, we are not setting H_dir_pins for the localization coils.
+    {
+      pinMode(H_dir_pins[i], OUTPUT); // new design
+    }
     pinMode(DAC_LDAC_pins[i], OUTPUT);
-    digitalWrite(ADC_CS_pins[i], !CS_EN);
+    if(i < 9) { // Localization coils do not report back to the GUI and thus the ADC is not needed
+      digitalWrite(ADC_CS_pins[i], !CS_EN);
+    }
     digitalWrite(DAC_CS_pins[i], !CS_EN);
     digitalWrite(DAC_LDAC_pins[i], LOW);
     digitalWrite(H_Enable_pins[i], H_EN);
-    digitalWrite(H_Neg_pins[i], DIR_ON);
-    digitalWrite(H_Pos_pins[i], DIR_ON);
+    //digitalWrite(H_Neg_pins[i], DIR_ON);
+    //digitalWrite(H_Pos_pins[i], DIR_ON);
+    if (i < 9) // There are 9 actuation channels, we are not setting H_dir_pins for the localization coils.
+    {
+      digitalWrite(H_dir_pins[i], H_DIR);
+    }
   }
 
   for (int i = 0; i < 3; i++)
@@ -233,8 +245,12 @@ uint8_t processSingleChannel(int i, channelStatus &local_channel, uint8_t cmdVal
     {
       set_direction(i, dir);
     }
-    local_channel.dir = dir;
-
+    if(i<9) {
+      local_channel.dir = dir; // set current direction for actuation coils
+    }
+    else if(i>=9) {
+      local_channel.dir = false; // set current direction to a constant for localization coils
+    }
     // assign the DAC values (upper and lower)
     uint8_t DACU = (0b00111111 & (local_channel.DAC_val >> 6));
     uint8_t DACL = (0b00111111 & local_channel.DAC_val);

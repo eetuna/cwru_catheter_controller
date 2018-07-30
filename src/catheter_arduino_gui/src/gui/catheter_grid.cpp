@@ -137,6 +137,7 @@ void CatheterGrid::GetCommands(std::vector<CatheterChannelCmdSet>& cmds)
   {
     CatheterChannelCmd newCmd;
     int64_t delayTime(parseGridRow(i, newCmd));
+    //newCmd.poll = true;
     newSet.commandList.push_back(newCmd);
     // advance the commands when necessary.
     if (delayTime > 0)

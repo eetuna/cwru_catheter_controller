@@ -1,6 +1,6 @@
 # catheter_arduino_controller
 
-[![Build Status](https://travis-ci.org/cwru-robotics/catheter_arduino_controller.svg?branch=master)](https://travis-ci.org/cwru-robotics/catheter_arduino_controller)
+[![Build Status](https://travis-ci.org/cwru-mercis/cwru_catheter_controller.svg?branch=master)](https://travis-ci.org/cwru-mercis/cwru_catheter_controller)
 
 arduino code for controlling the catheter as well as a gui for controlling the micro controller over USB
 This repository includes the following features:

@@ -145,6 +145,7 @@ bool CatheterSerialSender::dataAvailable()
 
 int CatheterSerialSender::processData(std::vector<CatheterChannelCmd> &cmd)
 {
+  //printf("here process data byte\n");
   cmd.clear();
   this->dataChange_ = true;
   return parseBytes2Cmds(this->responseLength_, bytesAvailable, cmd);
@@ -204,6 +205,7 @@ comStatus CatheterSerialSender::probePacket()
         printf("Size compare: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
         if (length > bytesAvailable.size())
         {
+          printf("INCOMPLETE length\n");
            printf("incomplete: <%d, %d>\n", static_cast<int> (bytesAvailable.size()), length);
           return incomplete;
         }
@@ -212,18 +214,21 @@ comStatus CatheterSerialSender::probePacket()
           bool fletcherVal(checkFletcher(length, bytesAvailable));
           if (fletcherVal)
           {
+            printf("success fletcher, value TRUE\n");
             this->responseLength_ = length;
             return valid;
           }
           else
           {
             printf("failed fletcher\n");
+            printf("RETURN AND WIPE\n");
             return returnAndWipe();
           }
         }
       }
       else
       {
+        printf("INCOMPLETE direct\n");
         return incomplete;
       }
     }

@@ -205,14 +205,18 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   result.currentMilliAmp = dac2MilliAmp(cmdData, result.dir);
 
   index += 3;
+
+
   // If the Poll bit is true, pull off the adc value
   if (result.poll)
   {
+  	printf("Got here poll\n");
     result.poll = true;
     uint16_t adcd1(static_cast<uint16_t> (cmdBytes[index]));
+
     if ((adcd1 >> 6) == 1)
     {
-      result.currentMilliAmp_ADC = -500.0;
+      result.currentMilliAmp_ADC = 0.0;
     }
     else
     {
@@ -224,6 +228,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
     }
     index += 2;
   }
+
   return result;
 }
 
@@ -259,6 +264,7 @@ int parseBytes2Cmds(int byteCount, std::vector<uint8_t>& bytesRead, std::vector<
   int byteIndex(3);
   while (byteIndex + 1 < byteCount)
   {
+  	//printf("Here parseBytes2Cmds:\n");
     cmds.push_back(parseSingleCommand(bytesRead, byteIndex));
   }
   bytesRead.erase(bytesRead.begin(), bytesRead.begin() + byteCount);
@@ -323,6 +329,8 @@ bool checkFletcher(int length, const std::vector<uint8_t> &bytePacket)
   if (bytePacket[length-1] == checksum) return true;
   else
   {
+    printf("length: %d\n", length);
+    printf("checksum wrong, lenghs are:");
     printf("%d, %d\n", checksum, bytePacket[length-1]);
     return false;
   }
@@ -332,6 +340,13 @@ bool checkFletcher(int length, const std::vector<uint8_t> &bytePacket)
 CatheterChannelCmdSet pollCmd()
 {
   CatheterChannelCmdSet pollCmdSet;
+  /*
+  for(int i = 0; i<2; i++){
+  pollCmdSet.commandList.push_back(CatheterChannelCmd());
+  pollCmdSet.commandList[i].poll = true;
+  pollCmdSet.commandList[i].channel = 0;
+  }
+  */
   pollCmdSet.commandList.push_back(CatheterChannelCmd());
   pollCmdSet.commandList[0].poll = true;
   pollCmdSet.commandList[0].channel = 0;
