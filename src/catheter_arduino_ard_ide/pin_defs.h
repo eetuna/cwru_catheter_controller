@@ -23,7 +23,7 @@
 // chip select (part of SPI) (DAC)
 //int DAC_CS_pins[NCHANNELS] = {2, 3, 4, 5, 6, 7};
 //int DAC_CS_pins[NCHANNELS] = {53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 44, 44, 44, 44, 44, 44}; //new design (16 channels)
-int DAC_CS_pins[NCHANNELS] = {53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 44, 44, 44, 44, 44}; //new design (15 channels)
+// int DAC_CS_pins[NCHANNELS] = {53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 44, 44, 44, 44, 44}; //new design (15 channels)
 
 
 // chip select (part of SPI) (ADC)
