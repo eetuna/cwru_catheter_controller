@@ -23,7 +23,6 @@
 #include <serial/serial.h>
 #include "catheter_arduino_gui/serial_thread.h"
 
-
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
