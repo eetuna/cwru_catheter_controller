@@ -33,7 +33,7 @@ bool delayMaker;
  */
 void set_enable(int channel, int en)
 {
-  digitalWrite(H_Enable_pins[channel], en); // Enables or disables hbridge enable channel pins. 
+  digitalWrite(H_Enable_pins[channel], en);
 }
 
 
@@ -44,20 +44,16 @@ void set_enable(int channel, int en)
  */
 void set_direction(int channel, int direction)
 {
-  if (channel < 9) // There are 9 actuation channels, we are not setting H_dir_pins for the localization coils.
+  
+  if (direction == 0)
   {
-    if (direction == 0)
-    {
-      digitalWrite(H_dir_pins[channel], H_DIR);// new design
-       //digitalWrite(H_Neg_pins[channel], DIR_ON);
-       //digitalWrite(H_Pos_pins[channel], !DIR_ON);
-    }
-    else
-    {
-      digitalWrite(H_dir_pins[channel], !H_DIR); //new design
-       //digitalWrite(H_Pos_pins[channel], DIR_ON);
-       //digitalWrite(H_Neg_pins[channel], !DIR_ON);
-    }
+    digitalWrite(H_Neg_pins[channel], DIR_ON);
+    digitalWrite(H_Pos_pins[channel], !DIR_ON);
+  }
+  else
+  {
+    digitalWrite(H_Pos_pins[channel], DIR_ON);
+    digitalWrite(H_Neg_pins[channel], !DIR_ON);
   }
 
 }

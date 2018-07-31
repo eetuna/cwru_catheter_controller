@@ -53,12 +53,10 @@ uint16_t ADC_read(uint8_t channel)
   // 1. Enable the ADC chip
   // 2. Read the 16 bits using the SPI bus
   // 3. Disable the ADC chip
-  if(channel<9) {
-    digitalWrite(ADC_CS_pins[channel], CS_EN);
-    uint16_t ret1(SPI.transfer16(0x0000));
-    digitalWrite(ADC_CS_pins[channel], !CS_EN);
-    return ret1;
-  }
+  digitalWrite(ADC_CS_pins[channel], CS_EN);
+  uint16_t ret1(SPI.transfer16(0x0000));
+  digitalWrite(ADC_CS_pins[channel], !CS_EN);
+  return ret1;
 }
 
 /**

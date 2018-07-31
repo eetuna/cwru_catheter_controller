@@ -69,12 +69,12 @@ unsigned long scanDuration;
  */
 void disableChannels()
 {
-  scanStartTime = millis(); // milliseconds this has been running 
+  scanStartTime = millis();
   for (int i = 0; i < NCHANNELS; i++)
     {
-      set_enable(i, !H_EN); // turns H bridge enable channels  to low 
+      set_enable(i, !H_EN);
     }
-  isScanning = true;  
+  isScanning = true;
 }
 
 /**
@@ -82,11 +82,11 @@ void disableChannels()
  */
 void setup()
 {
-	pin_init(); // sets up pins.
-	SPI_init(); // turns on SPI
-	serial_init(); // 
-	camera_counter = 0; // outdated maybe. 
-  isScanning = false; // 
+	pin_init();
+	SPI_init();
+	serial_init();
+	camera_counter = 0;
+  isScanning = false;
   //mriStatOld = false;
 
   // Here, the scanLines is converted to ms.
@@ -100,9 +100,9 @@ void setup()
     outputBytes[i] = 0;
   }
 
-  attachInterrupt(mriPin, disableChannels, RISING); // attachInterrupt(pin,ISR,Mode) (not usually recommended, ISR is a function 
+  attachInterrupt(mriPin, disableChannels, RISING);
 
-	delay(START_DELAY); // delay of 500 millisecons. 
+	delay(START_DELAY);
 }
 
 /**
@@ -112,18 +112,16 @@ void loop()
 {
   if(serial_available())
   {
-    uint8_t counter = (uint8_t) serial_available(); // returns number of bytes from input
-    uint8_t packetSize = read_bytes( inputBytes, counter); // how long is the bytes
-    uint8_t packetIndex(0); 
+    uint8_t counter = (uint8_t) serial_available();
+    uint8_t packetSize = read_bytes( inputBytes, counter);
+    uint8_t packetIndex(0);
     uint8_t cmdCount(0);
 
     // when data is available parse it.
     //If the parsing passes the checksum, then it is acted on.
-    //checks if the data was transmitted and received correctly 
-    
     if(cmd_check(inputBytes, packetSize, &packetIndex, &cmdCount))
     {
-      camera_counter = camera_counter + 1; // not a thing
+      camera_counter = camera_counter + 1;
 
 
       uint8_t outputLength(0);
