@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -std=c++11 -g -O0 -pthread -g  -shared -Wl,-soname,libstatus_frame_lib.so -o devel/lib/libstatus_frame_lib.so CMakeFiles/status_frame_lib.dir/src/gui/status_frame.cpp.o 

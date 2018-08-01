@@ -1,0 +1,8 @@
+prefix=/home/xxx91/ros_ws/src/catheter_arduino_controller/src/catheter_arduino_gui/cmake-build-debug/devel
+
+Name: catheter_arduino_gui
+Description: Description of catheter_arduino_gui
+Version: 0.0.1
+Cflags: -I/home/xxx91/ros_ws/src/catheter_arduino_controller/src/catheter_arduino_gui/include -I/usr/include -I/usr/lib/x86_64-linux-gnu/wx/include/gtk2-unicode-3.0 -I/usr/include/wx-3.0
+Libs: -L/home/xxx91/ros_ws/src/catheter_arduino_controller/src/catheter_arduino_gui/cmake-build-debug/devel/lib -lpc_utils_lib -l:/usr/lib/x86_64-linux-gnu/libboost_system.so -l:/usr/lib/x86_64-linux-gnu/libboost_thread.so -l:/usr/lib/x86_64-linux-gnu/libboost_chrono.so -l:/usr/lib/x86_64-linux-gnu/libboost_date_time.so -l:/usr/lib/x86_64-linux-gnu/libboost_atomic.so -l-L/usr/lib/x86_64-linux-gnu -l-pthread -l-lwx_gtk2u_core-3.0 -l-lwx_baseu-3.0 -l-lwx_gtk2u_adv-3.0 -l-lwx_gtk2u_propgrid-3.0
+Requires: 

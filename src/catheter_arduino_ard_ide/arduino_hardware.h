@@ -33,11 +33,7 @@ bool delayMaker;
  */
 void set_enable(int channel, int en)
 {
-<<<<<<< HEAD
-  digitalWrite(H_Enable_pins[channel], en);
-=======
   digitalWrite(H_Enable_pins[channel], en); // Enables or disables hbridge enable channel pins. 
->>>>>>> aaa2482c71985827747533bb44620667e398f113
 }
 
 

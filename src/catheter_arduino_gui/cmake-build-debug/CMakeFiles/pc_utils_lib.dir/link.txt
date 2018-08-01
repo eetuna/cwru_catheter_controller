@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -std=c++11 -g -O0 -pthread -g  -shared -Wl,-soname,libpc_utils_lib.so -o devel/lib/libpc_utils_lib.so CMakeFiles/pc_utils_lib.dir/src/com/pc_utils.cpp.o 

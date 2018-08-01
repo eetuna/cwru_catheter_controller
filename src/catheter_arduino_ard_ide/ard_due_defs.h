@@ -5,10 +5,7 @@
 #define CS_EN LOW
 #define H_EN HIGH
 #define DIR_ON HIGH
-<<<<<<< HEAD
-=======
 #define H_DIR HIGH
->>>>>>> aaa2482c71985827747533bb44620667e398f113
 
 #define GLOBAL_ADDR 0
 
