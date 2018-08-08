@@ -23,7 +23,7 @@ StatusGrid:: ~StatusGrid()
 
 
 StatusGrid::StatusGrid(wxPanel* parentPanel):
-  wxFlexGridSizer(16, 4, 2, 10)
+  wxFlexGridSizer(17, 4, 2, 10)
 {
   wxStaticText *channelIndex = new wxStaticText(parentPanel, -1, wxT("Channel #"));
   wxStaticText *setMa = new wxStaticText(parentPanel, -1, wxT("Set Current(mA)"));
@@ -36,7 +36,7 @@ StatusGrid::StatusGrid(wxPanel* parentPanel):
   this->Add(enable);
 
   textCtrl_.clear();
-  for ( int index(0); index < 60; index++)
+  for ( int index(0); index < 64; index++)
   {
     textCtrl_.push_back(new wxTextCtrl(parentPanel, -1));
     textCtrl_[index]->SetEditable(false);
