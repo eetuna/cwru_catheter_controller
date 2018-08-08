@@ -20,7 +20,7 @@
 // examples include packet size and channel count.
 
 /* number of channels being used */
-#define NCHANNELS 16
+#define NCHANNELS 6
 
 /* address which arduino interprets as GLOBAL (i.e., all channels) */
 #define GLOBAL_ADDR 0
