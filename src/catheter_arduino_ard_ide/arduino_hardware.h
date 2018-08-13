@@ -15,23 +15,14 @@
 */
 
 
-/*
- * @brief delayMaker toggles itself inside a for loop that is used to create time delay
- * 
- * Since this program implements interruption, it is undesirable to use delayMicroseconds(), which disables interruption when executed.
- * A for loop that toggles delayMaker during each iteration is used instead to create delays of microseconds. 
- * 
- */
-bool delayMaker;
-
-
+/* enable or disable the H-bridge on a given channel (Active LOW) */
 /**
  * @brief Enable or disable an H-bridge channel.
  *
  * @param channel The H-bridge channel to be enable/disable.
- * @param en This is set to H_EN if the H-bridge is to be enable, set to !H_EN otherwise.
+ * @param en This is set to 1 if the H-bridge is to be enable, set to 0 otherwise.
  */
-void set_enable(int channel, int en)
+void toggle_enable(int channel, int en)
 {
   digitalWrite(H_Enable_pins[channel], en);
 }
@@ -39,8 +30,9 @@ void set_enable(int channel, int en)
 
 /**
  * @brief Set the direction of an H-bridge channel.
+
  * @param channel The H-bridge channel whose direction is to be set.
- * @param direction The direction of the H-bridge channel. direction=0 indicates negative direction (current flows from Load_N to Load_P) and direction=1 indicates positive direction (current flows from Load_P to Load_N)
+ * @param direction The direction of the H-bridge channel.
  */
 void set_direction(int channel, int direction)
 {
@@ -58,6 +50,23 @@ void set_direction(int channel, int direction)
 
 }
 
+// zeros out the channel completely
+void zero(int channel)
+{
+  
+  digitalWrite(H_Neg_pins[channel], DIR_ON);
+  digitalWrite(H_Pos_pins[channel], DIR_ON);
+
+}
+
+// Opens the channel completely
+void openH(int channel)
+{
+  
+  digitalWrite(H_Neg_pins[channel], !DIR_ON);
+  digitalWrite(H_Pos_pins[channel], !DIR_ON);
+
+}
 
 /** 
  * @brief translate the 16 bit SPI data received from the MCP3201 ADC to the 12 bits sent to the PC 
