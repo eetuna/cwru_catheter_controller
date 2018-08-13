@@ -28,7 +28,7 @@
 #endif  // _DEBUG
 #endif  // __MSC_VER
 
-//julian
+//julian narvaez
 void incomingText::appendText(const std::string  &newText)
 {
   boost::mutex::scoped_lock lock(textMutex);
