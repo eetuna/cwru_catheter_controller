@@ -77,7 +77,7 @@ int loadPlayFile(const char* fileIn, std::vector<CatheterChannelCmdSet>& outputC
         getline(linestream, item, ',');
         singleCmd.currentMilliAmp = atof(item.c_str());
 
-        singleCmd.poll = true;
+        singleCmd.poll = false; //true
 
         /* parse delay */
         // Delay is delimitered by new line so using the default delimiter.

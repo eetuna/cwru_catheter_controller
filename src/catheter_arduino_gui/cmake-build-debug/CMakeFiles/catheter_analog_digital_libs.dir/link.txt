@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC  -std=c++11 -g -O0 -pthread -g  -shared -Wl,-soname,libcatheter_analog_digital_libs.so -o devel/lib/libcatheter_analog_digital_libs.so CMakeFiles/catheter_analog_digital_libs.dir/src/hardware/digital_analog_conversions.cpp.o 
