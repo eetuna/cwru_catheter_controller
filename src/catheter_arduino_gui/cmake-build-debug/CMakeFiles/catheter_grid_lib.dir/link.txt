@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC  -std=c++11 -g -O0 -pthread -g  -shared -Wl,-soname,libcatheter_grid_lib.so -o devel/lib/libcatheter_grid_lib.so CMakeFiles/catheter_grid_lib.dir/src/gui/catheter_grid.cpp.o 
