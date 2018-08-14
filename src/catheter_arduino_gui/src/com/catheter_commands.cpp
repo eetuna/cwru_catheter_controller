@@ -221,7 +221,7 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   {
   	printf("Got here poll\n");
     countCommand = countCommand + 1;
-    std::cout << "modulo ChanNum: " << countCommand % 15 << std::endl;
+    //std::cout << "modulo ChanNum: " << countCommand % 15 << std::endl;
 
   	if (countCommand % 15 == 1)
   		myfile_chs.open("currentsADC_ch1.txt", std::ofstream::app);
