@@ -17,6 +17,15 @@
 #include "catheter_arduino_gui/digital_analog_conversions.h"
 #include <vector>
 
+#include <stdint.h>
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
+#include <fstream>
+#include <unistd.h>
+ 
+static int countCommand = 0;
+std::ofstream myfile_chs;
+
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -211,6 +220,28 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
   if (result.poll)
   {
   	printf("Got here poll\n");
+    countCommand = countCommand + 1;
+    std::cout << "modulo ChanNum: " << countCommand % 15 << std::endl;
+
+  	if (countCommand % 15 == 1)
+  		myfile_chs.open("currentsADC_ch1.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 2)
+  		myfile_chs.open("currentsADC_ch2.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 3)
+  		myfile_chs.open("currentsADC_ch3.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 4)
+  		myfile_chs.open("currentsADC_ch4.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 5)
+  		myfile_chs.open("currentsADC_ch5.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 6)
+  		myfile_chs.open("currentsADC_ch6.txt", std::ofstream::app);
+    else if (countCommand % 15 == 7)
+  		myfile_chs.open("currentsADC_ch7.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 8)
+  		myfile_chs.open("currentsADC_ch8.txt", std::ofstream::app);
+  	else if (countCommand % 15 == 9)
+  		myfile_chs.open("currentsADC_ch9.txt", std::ofstream::app);
+
     result.poll = true;
     uint16_t adcd1(static_cast<uint16_t> (cmdBytes[index]));
 
@@ -227,6 +258,10 @@ CatheterChannelCmd parseSingleCommand(const std::vector<uint8_t>& cmdBytes, int 
     result.currentMilliAmp_ADC = adc2MilliAmp(adcData);
     }
     index += 2;
+
+    myfile_chs << std::setprecision(6) << result.currentMilliAmp_ADC << std::endl;
+    myfile_chs.close();
+
   }
 
   return result;
