@@ -24,7 +24,6 @@
 #include "cmd_parse.h"
 
 
-
 /**
  * @brief Individual channel statuses.
  */
@@ -83,7 +82,6 @@ void disableChannels()
  */
 void setup()
 {
-  //Serial.begin(9600);
 	pin_init(); // sets up pins.
 	SPI_init(); // turns on SPI
 	serial_init(); // 
@@ -116,7 +114,7 @@ void loop()
   {
     uint8_t counter = (uint8_t) serial_available(); // returns number of bytes from input
     uint8_t packetSize = read_bytes( inputBytes, counter); // how long is the bytes
-    uint8_t packetIndex(0);
+    uint8_t packetIndex(0); 
     uint8_t cmdCount(0);
 
     // when data is available parse it.
@@ -152,7 +150,6 @@ void loop()
     for (int i = 0; i  < NCHANNELS; i++)
     {
       set_direction(i,channelList[i].dir);
-      //Serial.print(channelList[i].enable);
       set_enable(i, H_EN);
     }
     isScanning = false;

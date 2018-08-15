@@ -4,8 +4,8 @@
 
 #define CS_EN LOW
 #define H_EN HIGH
-#define DIR_ON HIGH
-#define H_DIR HIGH
+//#define DIR_ON HIGH
+#define H_DIR LOW // changed this high to low for the 15 channel box
 
 #define GLOBAL_ADDR 0
 
