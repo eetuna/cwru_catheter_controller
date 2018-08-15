@@ -23,7 +23,6 @@
 #include "cmd_support.h"
 #include "cmd_parse.h"
 
-
 /**
  * @brief Individual channel statuses.
  */
