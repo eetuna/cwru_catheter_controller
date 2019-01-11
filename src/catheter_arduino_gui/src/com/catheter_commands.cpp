@@ -155,7 +155,7 @@ std::vector<uint8_t> encodeSingleCommand(const CatheterChannelCmd& cmd)
     }
     else if (i == 1)
     {
-      // bits 8-15  (first 6 bits of DAC data (in the lower 6) (modified to match the arduin0
+      // bits 8-15  (first 6 bits of DAC data (in the lower 6) (modified to match the arduino)
       bytes.push_back((dacSetting >> 6) & 63);
     }
     else if (i == 2)

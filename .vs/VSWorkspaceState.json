@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\catheter_arduino_gui",
+    "\\src\\catheter_arduino_gui\\src",
+    "\\src\\catheter_arduino_gui\\src\\gui"
+  ],
+  "SelectedNode": "\\src\\catheter_arduino_gui\\src\\gui\\status_text.cpp",
+  "PreviewInSolutionExplorer": false
+}
