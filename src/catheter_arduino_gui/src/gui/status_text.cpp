@@ -28,7 +28,7 @@
 #endif  // _DEBUG
 #endif  // __MSC_VER
 
-//julian narvaez
+//testing push/merging with Visual Studio and GitHub
 void incomingText::appendText(const std::string  &newText)
 {
   boost::mutex::scoped_lock lock(textMutex);
